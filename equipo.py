@@ -5,6 +5,7 @@ class Equipo:
         self.__dispositivo = dispositivo
         self.__falla = falla
         self.__presupuesto_usd = presupuesto_usd
+        self.__pagos = [] # Lista para guardar los abonos: [monto_usd, moneda]
         self.estado = estado
         self.siguiente = None 
 
@@ -13,3 +14,13 @@ class Equipo:
     def obtener_dispositivo(self): return self.__dispositivo
     def obtener_falla(self): return self.__falla
     def obtener_presupuesto(self): return self.__presupuesto_usd
+    def registrar_pago(self, monto, moneda):
+        if monto > 0:
+            self.__pagos.append({"monto": monto, "moneda": moneda})
+            return True
+        return False
+    # MÉTODO DE LECTURA (Getter): Devuelve una copia, no la lista original
+    def obtener_historial_pagos(self):
+        return list(self.__pagos) 
+    def obtener_total_abonado(self):
+        return sum(pago["monto"] for pago in self.__pagos)

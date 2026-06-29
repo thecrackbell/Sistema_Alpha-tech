@@ -121,3 +121,34 @@ class ListaReparaciones:
             actual = actual.siguiente
         
         return resultados
+    def ver_pagos(self, id_orden):
+        """Muestra el historial de pagos de una orden específica"""
+        equipo = self.buscar_orden(id_orden)
+        if equipo is None:
+            print(f"❌ Orden #{id_orden} no encontrada.")
+            return
+        
+        historial = equipo.obtener_historial_pagos()
+        if not historial:
+            print(f"📭 No hay pagos registrados para la orden #{id_orden}.")
+            return
+        
+        print(f"\n💳 Historial de pagos para la orden #{id_orden}:")
+        for pago in historial:
+            print(f"   - Monto: {pago['monto']:.2f} {pago['moneda']}")
+        
+        total_abonado = equipo.obtener_total_abonado()
+        saldo_pendiente = equipo.obtener_presupuesto() - total_abonado
+        print(f"💰 Total abonado: ${total_abonado:.2f}")
+        print(f"💵 Saldo pendiente: ${saldo_pendiente:.2f}")
+    def registrar_pago(self, id_busqueda, monto, moneda):
+        actual = self.cabeza
+        while actual:
+        # CAMBIA ESTO:
+        # if actual.id_orden == id_busqueda: 
+        
+        # POR ESTO:
+            if actual.obtener_id() == id_busqueda: 
+                return actual.registrar_pago(monto, moneda)
+            actual = actual.siguiente
+        return False

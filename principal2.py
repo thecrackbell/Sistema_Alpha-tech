@@ -1,12 +1,14 @@
 import time
 from lista_reparaciones import ListaReparaciones
 from colores import Colores
-from conversor import convertir_a_dolares, convertir_a_pesos
+from conversor import ConversorMoneda
 
 def ejecutar_menu():
     sistema = ListaReparaciones()
     sistema.cargar_desde_json()
-    
+
+    conversor = ConversorMoneda()
+
     while True:
         print(f"{Colores.AZUL}\n--- 🛠️ ALPHA TECH (v4.0 MODULAR) ---{Colores.RESET}")
         print(f"{Colores.VERDE}Próximo ID automático: {sistema.proximo_id}{Colores.RESET}")
@@ -15,10 +17,13 @@ def ejecutar_menu():
         print(f"{Colores.VERDE}3. Cambiar estado de una orden{Colores.RESET}")
         print(f"{Colores.VERDE}4. Ver informe de rendimiento del taller{Colores.RESET}")
         print(f"{Colores.VERDE}5. Buscar orden por ID{Colores.RESET}")
-        print(f"{Colores.VERDE}6. Buscar por Nombre de Cliente{Colores.RESET}")
-        print(f"{Colores.VERDE}7. Guardar y Salir{Colores.RESET}")
+        print(f"{Colores.VERDE}6. Conversor de Moneda{Colores.RESET}")
+        print(f"{Colores.VERDE}7. Ver pagos de una orden{Colores.RESET}")
+        print(f"{Colores.VERDE}8. Conversor de Moneda{Colores.RESET}")
+        print(f"{Colores.VERDE}9. Registrar pago para una orden{Colores.RESET}")
+        print(f"{Colores.VERDE}10. Guardar y Salir{Colores.RESET}")
 
-        opcion = input(f"{Colores.AZUL}Seleccione (1-7): {Colores.RESET}")
+        opcion = input(f"{Colores.AZUL}Seleccione (1-10): {Colores.RESET}")
         
         if opcion == "1":
             cli = input(f"{Colores.AZUL}Cliente: {Colores.RESET}").capitalize().strip()
@@ -39,11 +44,13 @@ def ejecutar_menu():
             except ValueError:
                 print(f"{Colores.ROJO}❌ [ERROR]: El presupuesto debe ser un número.{Colores.RESET}")
             input(f"{Colores.VERDE}Presione Enter para continuar...{Colores.RESET}") 
-            time.sleep(1)
+            time.sleep(2)
             
         elif opcion == "2":
             sistema.mostrar_taller_activo()
             input(f"{Colores.VERDE}Presione Enter para continuar...{Colores.RESET}")
+            time.sleep(2)
+            print(f"{Colores.VERDE}Presione Enter para continuar...{Colores.RESET}")
 
         elif opcion == "3":
             id_o = input(f"{Colores.AZUL}ID de orden a actualizar: {Colores.RESET}")
@@ -75,6 +82,24 @@ def ejecutar_menu():
             time.sleep(3)
             print(f"{Colores.VERDE}Presione Enter para continuar...{Colores.RESET}")
         elif opcion == "6":
+            try:
+                montousd = float(input(f"{Colores.AZUL}Ingrese el monto en USD que desea dar su equivalente: {Colores.RESET}"))
+                conversor = ConversorMoneda()
+                conversor.imprimir_tasas_equivalentes(montousd)
+            except ValueError:
+                print(f"{Colores.ROJO}❌ [ERROR]: El monto en USD debe ser un número.{Colores.RESET}")
+            time.sleep(3)
+            print(f"{Colores.VERDE}Presione Enter para continuar...{Colores.RESET}")
+        elif opcion == "7":
+            try:
+                idbuscar = int(input(f"{Colores.AZUL}Ingrese el ID de la orden a para ver sus pagos: {Colores.RESET}"))
+            except ValueError:
+                print(f"{Colores.ROJO}❌ [ERROR]: El ID de orden debe ser un número.{Colores.RESET}")
+            idbuscar=str(idbuscar)  # Convertimos a string para la búsqueda
+            sistema.ver_pagos(idbuscar)
+            time.sleep(3)
+            print(f"{Colores.VERDE}Presione Enter para continuar...{Colores.RESET}")
+        elif opcion == "8":
             entrada = input(f"{Colores.AZUL}Introduzca el nombre a buscar: {Colores.RESET}").strip()
             
             # Validamos: quitamos los espacios para comprobar solo las letras
@@ -87,6 +112,7 @@ def ejecutar_menu():
             # Si pasa la validación, buscamos
             encontrados = sistema.buscar_orden_por_nombre(entrada)
             
+            
             if encontrados:
                 print(f"{Colores.VERDE}\n✅ Se encontraron {len(encontrados)} resultados:")
                 for equipo in encontrados:
@@ -94,13 +120,35 @@ def ejecutar_menu():
             else:
                 print(f"{Colores.ROJO}❌ No se encontraron resultados.{Colores.RESET}")
             input(f"{Colores.VERDE}Presione Enter para continuar...{Colores.RESET}")
-           
-        elif opcion == "7":
+            time.sleep(3)
+            print(f"{Colores.VERDE}Presione Enter para continuar...{Colores.RESET}")
+        elif opcion == "9":
+            try:
+                id_pago = int(input(f"{Colores.AZUL}Ingrese el ID de la orden: {Colores.RESET}"))
+                id_pago = str(id_pago)
+                
+                # Pedimos los datos faltantes para el pago
+                monto = float(input(f"{Colores.AZUL}Monto a registrar: {Colores.RESET}"))
+                moneda = input(f"{Colores.AZUL}Moneda (USD/BS): {Colores.RESET}").upper()
+                
+                # Ahora sí pasamos los 3 argumentos que tu función necesita
+                if sistema.registrar_pago(id_pago, monto, moneda):
+                    print(f"{Colores.VERDE}✅ Pago registrado correctamente.{Colores.RESET}")
+                else:
+                    print(f"{Colores.ROJO}❌ No se pudo registrar el pago.{Colores.RESET}")
+                    
+            except ValueError:
+                print(f"{Colores.ROJO}❌ [ERROR]: El ID y el monto deben ser numéricos.{Colores.RESET}")
+            
+            time.sleep(2)
+        elif opcion == "10":
             sistema.guardar_en_json()
             print(f"{Colores.VERDE}💾 ¡Hasta mañana!{Colores.RESET}")
             break
         else:
             print(f"{Colores.AMARILLO}⚠️ Opción no válida.{Colores.RESET}")
+        time.sleep(3)
+        print(f"{Colores.VERDE}Presione Enter para continuar...{Colores.RESET}")
 
 if __name__ == "__main__":
     ejecutar_menu()
