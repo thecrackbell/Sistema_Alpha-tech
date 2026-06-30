@@ -1,53 +1,19 @@
 {
-    "proximo_id": 1007,
+    "proximo_id": 1002,
     "equipos": [
         {
             "id_orden": "1001",
-            "cliente": "Jesus",
-            "dispositivo": "Psp",
-            "falla": "Pantalla",
-            "presupuesto_usd": 30.0,
-            "estado": "Recibido (En Espera)"
-        },
-        {
-            "id_orden": "1002",
-            "cliente": "Carlos",
-            "dispositivo": "Corneta",
-            "falla": "Pin de carga",
-            "presupuesto_usd": 7.0,
-            "estado": "Recibido (En Espera)"
-        },
-        {
-            "id_orden": "1003",
-            "cliente": "Neida",
-            "dispositivo": "Tablet",
-            "falla": "De todo",
-            "presupuesto_usd": 8.0,
-            "estado": "Recibido (En Espera)"
-        },
-        {
-            "id_orden": "1004",
-            "cliente": "Jesus",
-            "dispositivo": "Ps4 pro",
-            "falla": "Mantenimiento",
-            "presupuesto_usd": 30.0,
-            "estado": "Recibido (En Espera)"
-        },
-        {
-            "id_orden": "1005",
-            "cliente": "Gustabo",
-            "dispositivo": "Ps4 fat",
-            "falla": "Disco duro",
-            "presupuesto_usd": 65.0,
-            "estado": "Recibido (En Espera)"
-        },
-        {
-            "id_orden": "1006",
-            "cliente": "Eiber",
+            "cliente": "Humberto",
             "dispositivo": "Laptop",
-            "falla": "Limpieza y sistema",
-            "presupuesto_usd": 20.0,
-            "estado": "Recibido (En Espera)"
+            "falla": "Bisgras, mantenimiento, sistema",
+            "presupuesto_usd": 40.0,
+            "estado": "Recibido (En Espera)",
+            "pagos": [
+                {
+                    "monto": 40.0,
+                    "moneda": "USD"
+                }
+            ]
         }
     ]
 }
