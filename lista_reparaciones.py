@@ -23,8 +23,8 @@ class ListaReparaciones:
                 actual = actual.siguiente
             actual.siguiente = nuevo_equipo
 
-    def _agregar_nodo_manual(self, id_o, cli, dev, fal, pre, est, pagos):
-        nuevo_equipo = Equipo(id_o, cli, dev, fal, pre, est)
+    def _agregar_nodo_manual(self, id_o, cli, dev, fal, pre, est, pagos,fecha):
+        nuevo_equipo = Equipo(id_o, cli, dev, fal, pre, est,fecha_ingreso=fecha)
         for p in pagos:
             nuevo_equipo.registrar_pago(p['monto'], p['moneda'])
         self._insertar_al_final(nuevo_equipo)
@@ -49,7 +49,8 @@ class ListaReparaciones:
                 "falla": actual.obtener_falla(),
                 "presupuesto_usd": actual.obtener_presupuesto(),
                 "estado": actual.estado,
-                "pagos": actual.obtener_historial_pagos()
+                "pagos": actual.obtener_historial_pagos(),
+                "fecha_ingreso": actual.fecha_ingreso  # <--- Agregamos la fecha
             })
             actual = actual.siguiente
         with open(nombre_archivo, "w", encoding="utf-8") as archivo:
@@ -70,7 +71,8 @@ class ListaReparaciones:
                         e.get("falla", "N/A"), 
                         e.get("presupuesto_usd", 0), 
                         e.get("estado", "N/A"), 
-                        e.get("pagos", [])
+                        e.get("pagos", []),
+                        e.get("fecha_ingreso") # <--- Pasamos la fecha guardada
                     )
         except (FileNotFoundError, json.JSONDecodeError):
             self.proximo_id = 1001
@@ -83,7 +85,9 @@ class ListaReparaciones:
         print("\n📋 LISTADO DE ÓRDENES:")
         actual = self.cabeza
         while actual is not None:
-            print(f"🆔 #{actual.obtener_id()} | {actual.obtener_dispositivo()} | Estado: {actual.estado}| Cliente: {actual.obtener_cliente()} | Falla: {actual.obtener_falla()} | Presupuesto: ${actual.obtener_presupuesto():.2f}")
+            print(f"🆔 #{actual.obtener_id()} | Ingreso: {actual.fecha_ingreso} | {actual.obtener_dispositivo()} | "
+                  f"Estado: {actual.estado} | Cliente: {actual.obtener_cliente()} | "
+                  f"Falla: {actual.obtener_falla()} | Presupuesto: ${actual.obtener_presupuesto():.2f}")
             actual = actual.siguiente   
 
     def generar_reporte_rendimiento(self):
@@ -126,13 +130,17 @@ class ListaReparaciones:
         if equipo is None:
             print(f"❌ Orden #{id_orden} no encontrada.")
             return
+        # AGREGAR ESTA LÍNEA PARA MOSTRAR LA FECHA:
+        print(f"\n📅 Fecha de ingreso del equipo: {equipo.fecha_ingreso}")
         historial = equipo.obtener_historial_pagos()
         if not historial:
             print(f"📭 No hay pagos registrados para la orden #{id_orden}.")
             return
         print(f"\n💳 Historial de pagos para la orden #{id_orden}:")
         for pago in historial:
-            print(f"   - Monto: {pago['monto']:.2f} {pago['moneda']}")
+           # Mostramos la fecha guardada en el diccionario
+            fecha = pago.get('fecha', 'Fecha no registrada')
+            print(f"   - {fecha} | Monto: {pago['monto']:.2f} {pago['moneda']}")
         total_abonado = equipo.obtener_total_abonado()
         saldo_pendiente = equipo.obtener_presupuesto() - total_abonado
         print(f"💰 Total abonado: ${total_abonado:.2f}")

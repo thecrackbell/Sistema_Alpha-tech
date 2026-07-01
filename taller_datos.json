@@ -3,17 +3,24 @@
     "equipos": [
         {
             "id_orden": "1001",
-            "cliente": "Humberto",
-            "dispositivo": "Laptop",
-            "falla": "Bisgras, mantenimiento, sistema",
-            "presupuesto_usd": 40.0,
+            "cliente": "Jesus",
+            "dispositivo": "Ps4 pro",
+            "falla": "Temperatura",
+            "presupuesto_usd": 30.0,
             "estado": "Recibido (En Espera)",
             "pagos": [
                 {
-                    "monto": 40.0,
-                    "moneda": "USD"
+                    "monto": 20.0,
+                    "moneda": "BS",
+                    "fecha": "2026-06-30 20:26"
+                },
+                {
+                    "monto": 20.0,
+                    "moneda": "USD",
+                    "fecha": "2026-06-30 20:26"
                 }
-            ]
+            ],
+            "fecha_ingreso": "2026-06-30"
         }
     ]
 }
