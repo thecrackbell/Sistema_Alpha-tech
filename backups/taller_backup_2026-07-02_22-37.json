@@ -1,5 +1,5 @@
 {
-    "proximo_id": 1005,
+    "proximo_id": 1004,
     "equipos": [
         {
             "id_orden": "1001",
@@ -45,22 +45,6 @@
                     "monto": 7.82,
                     "moneda": "BS",
                     "fecha": "2026-07-02 22:34"
-                }
-            ],
-            "fecha_ingreso": "2026-07-02"
-        },
-        {
-            "id_orden": "1004",
-            "cliente": "Humberto",
-            "dispositivo": "Laptop",
-            "falla": "Bisagras y temperatura",
-            "presupuesto_usd": 35.0,
-            "estado": "Recibido (En Espera)",
-            "pagos": [
-                {
-                    "monto": 35.0,
-                    "moneda": "BS",
-                    "fecha": "2026-07-02 22:43"
                 }
             ],
             "fecha_ingreso": "2026-07-02"

@@ -27,3 +27,6 @@ class Equipo:
         return list(self.__pagos) 
     def obtener_total_abonado(self):
         return sum(pago["monto"] for pago in self.__pagos)
+    def cargar_pago_historico(self, monto, moneda, fecha):
+        # Este método no cambia la fecha, la respeta
+        self.__pagos.append({"monto": monto, "moneda": moneda, "fecha": fecha})

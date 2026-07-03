@@ -1,0 +1,31 @@
+{
+    "proximo_id": 1003,
+    "equipos": [
+        {
+            "id_orden": "1001",
+            "cliente": "Jesus",
+            "dispositivo": "Ps4 pro",
+            "falla": "Temperatura",
+            "presupuesto_usd": 30.0,
+            "estado": "Recibido (En Espera)",
+            "pagos": [
+                {
+                    "monto": 30.0,
+                    "moneda": "BS",
+                    "fecha": "2026-07-02 21:46"
+                }
+            ],
+            "fecha_ingreso": "2026-07-01"
+        },
+        {
+            "id_orden": "1002",
+            "cliente": "Jose",
+            "dispositivo": "Ps4",
+            "falla": "Venta",
+            "presupuesto_usd": 250.0,
+            "estado": "Recibido (En Espera)",
+            "pagos": [],
+            "fecha_ingreso": "2026-07-02"
+        }
+    ]
+}

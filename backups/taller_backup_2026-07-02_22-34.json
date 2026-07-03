@@ -1,5 +1,5 @@
 {
-    "proximo_id": 1005,
+    "proximo_id": 1004,
     "equipos": [
         {
             "id_orden": "1001",
@@ -12,7 +12,7 @@
                 {
                     "monto": 30.0,
                     "moneda": "BS",
-                    "fecha": "2026-07-02 22:34"
+                    "fecha": "2026-07-02 22:12"
                 }
             ],
             "fecha_ingreso": "2026-07-01"
@@ -24,13 +24,7 @@
             "falla": "Venta",
             "presupuesto_usd": 250.0,
             "estado": "Recibido (En Espera)",
-            "pagos": [
-                {
-                    "monto": 250.0,
-                    "moneda": "BS",
-                    "fecha": "2026-07-02 22:35"
-                }
-            ],
+            "pagos": [],
             "fecha_ingreso": "2026-07-02"
         },
         {
@@ -44,23 +38,7 @@
                 {
                     "monto": 7.82,
                     "moneda": "BS",
-                    "fecha": "2026-07-02 22:34"
-                }
-            ],
-            "fecha_ingreso": "2026-07-02"
-        },
-        {
-            "id_orden": "1004",
-            "cliente": "Humberto",
-            "dispositivo": "Laptop",
-            "falla": "Bisagras y temperatura",
-            "presupuesto_usd": 35.0,
-            "estado": "Recibido (En Espera)",
-            "pagos": [
-                {
-                    "monto": 35.0,
-                    "moneda": "BS",
-                    "fecha": "2026-07-02 22:43"
+                    "fecha": "2026-07-02 22:13"
                 }
             ],
             "fecha_ingreso": "2026-07-02"

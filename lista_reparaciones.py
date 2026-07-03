@@ -1,5 +1,8 @@
 import json
+import os
+import shutil
 from equipo import Equipo
+from datetime import datetime
 
 class ListaReparaciones:
     def __init__(self):
@@ -26,7 +29,7 @@ class ListaReparaciones:
     def _agregar_nodo_manual(self, id_o, cli, dev, fal, pre, est, pagos,fecha):
         nuevo_equipo = Equipo(id_o, cli, dev, fal, pre, est,fecha_ingreso=fecha)
         for p in pagos:
-            nuevo_equipo.registrar_pago(p['monto'], p['moneda'])
+            nuevo_equipo.cargar_pago_historico(p['monto'], p['moneda'], p['fecha'])
         self._insertar_al_final(nuevo_equipo)
 
     def modificar_estado_equipo(self, id_orden, nuevo_estado):
@@ -153,3 +156,52 @@ class ListaReparaciones:
                 return actual.registrar_pago(monto, moneda)
             actual = actual.siguiente
         return False
+    def generar_cierre_caja(self):
+        fecha_hoy = datetime.now().strftime("%Y-%m-%d")
+        total_usd = 0.0
+        total_bs = 0.0
+        hubo_movimientos = False
+        
+        actual = self.cabeza
+        while actual:
+            # Obtenemos la lista de pagos de este equipo
+            historial = actual.obtener_historial_pagos()
+            
+            for pago in historial:
+                # Extraemos solo la fecha (los primeros 10 caracteres: YYYY-MM-DD)
+                fecha_pago_corta = pago['fecha'][:10]
+                
+                # <--- ¿Qué sale aquí?
+                # Comparamos estrictamente
+                if fecha_pago_corta == fecha_hoy:
+                    hubo_movimientos = True
+                    if pago['moneda'] == "USD":
+                        total_usd += pago['monto']
+                    elif pago['moneda'] == "BS":
+                        total_bs += pago['monto']
+            
+            actual = actual.siguiente
+        
+        # Ahora el print está fuera del while
+        if hubo_movimientos:
+            print(f"\n📊 --- RESUMEN DE CIERRE DEL DÍA ({fecha_hoy}) ---")
+            print(f"💵 Total USD: ${total_usd:.2f}")
+            print(f"💳 Total BS:  Bs {total_bs:.2f}")
+            print("------------------------------------------")
+        else:
+            print("\nℹ️ No se registraron pagos el día de hoy.")
+    def crear_backup(self):
+        # 1. Aseguramos que la carpeta exista
+        if not os.path.exists('backups'):
+            os.makedirs('backups')
+        
+        # 2. Creamos el nombre del archivo con fecha y hora
+        fecha_backup = datetime.now().strftime("%Y-%m-%d_%H-%M")
+        nombre_archivo = f"backups/taller_backup_{fecha_backup}.json"
+        
+        # 3. Copiamos el archivo actual
+        try:
+            shutil.copyfile("taller_datos.json", nombre_archivo)
+            print(f"✅ Backup creado: {nombre_archivo}")
+        except FileNotFoundError:
+            print("⚠️ No se encontró el archivo principal para el backup.")
