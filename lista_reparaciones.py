@@ -3,6 +3,7 @@ import os
 import shutil
 from equipo import Equipo
 from datetime import datetime
+from colores import Colores
 
 class ListaReparaciones:
     def __init__(self):
@@ -205,3 +206,51 @@ class ListaReparaciones:
             print(f"✅ Backup creado: {nombre_archivo}")
         except FileNotFoundError:
             print("⚠️ No se encontró el archivo principal para el backup.")
+    def verificar_morosidad(self, dias_limite=10):
+        hoy = datetime.now()
+        morosos = []
+        actual = self.cabeza
+    
+        while actual:
+            # Convertimos la fecha guardada (string) a objeto datetime
+            fecha_ing = datetime.strptime(actual.fecha_ingreso, "%Y-%m-%d")
+            diferencia = (hoy - fecha_ing).days
+        
+            if diferencia > dias_limite and actual.estado.lower() != "entregado":
+             morosos.append(actual)
+            
+            actual = actual.siguiente
+        return morosos
+    def mostrar_equipos_retrasados(self):
+        hoy = datetime.now()
+        print(f"\n{Colores.ROJO}⚠️ EQUIPOS CON MÁS DE 10 DÍAS EN TALLER:{Colores.RESET}")
+        
+        contador = 0
+        actual = self.cabeza
+        while actual:
+            # Convertimos la fecha de ingreso (string) a objeto datetime
+            # Asegúrate que tu fecha de ingreso en el JSON sea formato "YYYY-MM-DD"
+            fecha_ingreso = datetime.strptime(actual.fecha_ingreso, "%Y-%m-%d")
+            diferencia = (hoy - fecha_ingreso).days
+            
+            # Filtramos solo los que no están entregados y tienen más de 10 días
+            if diferencia > 10 and actual.estado.lower() != "entregado" and actual.estado.lower() == "Recibido (En Espera)".lower():
+                print(f"🆔 #{actual.obtener_id()} | 👤 {actual.obtener_cliente()} | "
+                      f"⏳ {diferencia} días en taller | 🛠️ {actual.obtener_dispositivo()}")
+                contador += 1
+            
+            actual = actual.siguiente
+        
+        if contador == 0:
+            print(f"{Colores.VERDE}✅ Todo al día. No hay equipos retrasados.{Colores.RESET}")
+    def exportar_reporte_txt(self):
+        nombre_archivo = f"reporte_taller_{datetime.now().strftime('%Y-%m-%d')}.txt"
+        with open(nombre_archivo, "w") as f:
+            f.write("--- REPORTE DE TALLER ALPHA TECH ---\n")
+            f.write(f"Fecha: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n")
+            actual = self.cabeza
+            while actual:
+                f.write(f"ID: {actual.obtener_id()} | Cliente: {actual.obtener_cliente()} | "
+                        f"Estado: {actual.estado} | Falla: {actual.obtener_falla()}\n")
+                actual = actual.siguiente
+        print(f"\n{Colores.VERDE}💾 Reporte guardado como: {nombre_archivo}{Colores.RESET}")

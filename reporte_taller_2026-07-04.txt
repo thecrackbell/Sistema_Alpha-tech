@@ -1,0 +1,7 @@
+--- REPORTE DE TALLER ALPHA TECH ---
+Fecha: 2026-07-04 12:54
+
+ID: 1001 | Cliente: Jesus | Estado: Reparado (listo para entregar) | Falla: Temperatura
+ID: 1002 | Cliente: Jose | Estado: Recibido (En Espera) | Falla: Venta
+ID: 1003 | Cliente: Franklin | Estado: Recibido (En Espera) | Falla: Placa danada
+ID: 1004 | Cliente: Humberto | Estado: Recibido (En Espera) | Falla: Bisagras y temperatura

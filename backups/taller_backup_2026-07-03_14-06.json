@@ -7,7 +7,7 @@
             "dispositivo": "Ps4 pro",
             "falla": "Temperatura",
             "presupuesto_usd": 30.0,
-            "estado": "Reparado (listo para entregar)",
+            "estado": "reparado",
             "pagos": [
                 {
                     "monto": 30.0,
