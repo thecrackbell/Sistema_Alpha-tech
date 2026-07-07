@@ -65,20 +65,44 @@ class ListaReparaciones:
         try:
             with open(nombre_archivo, "r", encoding="utf-8") as archivo:
                 datos = json.load(archivo)
-                self.proximo_id = datos.get("proximo_id", 1001)
+                
+                # 1. Blindaje del contador de ID
+                self.proximo_id = int(datos.get("proximo_id", 1001))
                 self.cabeza = None
-                for e in datos.get("equipos", []):
+                
+                # 2. Iteración defensiva
+                equipos = datos.get("equipos", [])
+                for e in equipos:
+                    # Validamos que el ID sea procesable
+                    id_orden = str(e.get("id_orden", "N/A"))
+                    
+                    # Si el ID es "N/A", es un dato corrupto, lo saltamos
+                    if id_orden == "N/A":
+                        print(f"{Colores.AMARILLO}⚠️ Alerta: Se encontró una orden sin ID válido. Saltando.{Colores.RESET}")
+                        continue
+                        
+                    # 3. Conversión segura de tipos
+                    cliente = str(e.get("cliente", "Desconocido"))
+                    dispositivo = str(e.get("dispositivo", "N/A"))
+                    falla = str(e.get("falla", "N/A"))
+                    try:
+                        presupuesto = float(e.get("presupuesto_usd", 0))
+                    except ValueError:
+                        presupuesto = 0.0
+                    
+                    estado = str(e.get("estado", "Recibido (En Espera)"))
+                    pagos = e.get("pagos", [])
+                    fecha = e.get("fecha_ingreso", datetime.now().strftime("%Y-%m-%d"))
+
+                    # Inyectamos los datos validados
                     self._agregar_nodo_manual(
-                        e.get("id_orden", "N/A"), 
-                        e.get("cliente", "Desconocido"), 
-                        e.get("dispositivo", "N/A"), 
-                        e.get("falla", "N/A"), 
-                        e.get("presupuesto_usd", 0), 
-                        e.get("estado", "N/A"), 
-                        e.get("pagos", []),
-                        e.get("fecha_ingreso") # <--- Pasamos la fecha guardada
+                        id_orden, cliente, dispositivo, falla, 
+                        presupuesto, estado, pagos, fecha
                     )
-        except (FileNotFoundError, json.JSONDecodeError):
+            print("✅ Datos cargados correctamente.")
+
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            print(f"⚠️ Archivo no encontrado o corrupto ({e}). Iniciando sistema en limpio.")
             self.proximo_id = 1001
             self.cabeza = None
 
@@ -216,33 +240,30 @@ class ListaReparaciones:
             fecha_ing = datetime.strptime(actual.fecha_ingreso, "%Y-%m-%d")
             diferencia = (hoy - fecha_ing).days
         
-            if diferencia > dias_limite and actual.estado.lower() != "entregado":
+            if diferencia > dias_limite and actual.estado.lower() != "entregado" and actual.estado.lower() == "reparado (listo para entregar)":
              morosos.append(actual)
             
             actual = actual.siguiente
         return morosos
     def mostrar_equipos_retrasados(self):
         hoy = datetime.now()
-        print(f"\n{Colores.ROJO}⚠️ EQUIPOS CON MÁS DE 10 DÍAS EN TALLER:{Colores.RESET}")
+        # Simplificamos la lógica: solo nos importa que NO esté entregado
+        print(f"\n{Colores.ROJO}⚠️ EQUIPOS CON MÁS DE 10 DÍAS SIN Reparar:{Colores.RESET}")
         
         contador = 0
         actual = self.cabeza
         while actual:
-            # Convertimos la fecha de ingreso (string) a objeto datetime
-            # Asegúrate que tu fecha de ingreso en el JSON sea formato "YYYY-MM-DD"
-            fecha_ingreso = datetime.strptime(actual.fecha_ingreso, "%Y-%m-%d")
-            diferencia = (hoy - fecha_ingreso).days
-            
-            # Filtramos solo los que no están entregados y tienen más de 10 días
-            if diferencia > 10 and actual.estado.lower() != "entregado" and actual.estado.lower() == "Recibido (En Espera)".lower():
-                print(f"🆔 #{actual.obtener_id()} | 👤 {actual.obtener_cliente()} | "
-                      f"⏳ {diferencia} días en taller | 🛠️ {actual.obtener_dispositivo()}")
-                contador += 1
-            
+            try:
+                fecha_ing = datetime.strptime(actual.fecha_ingreso, "%Y-%m-%d")
+                diferencia = (hoy - fecha_ing).days
+                
+                # Blindaje: Usamos .lower() para evitar errores de mayúsculas/minúsculas
+                if diferencia > 10 and actual.estado.lower() != "entregado" and actual.estado.lower() == "recibido (en espera)":
+                    print(f"🆔 #{actual.obtener_id()} | Estado: {actual.estado} | ⏳ {diferencia} días")
+                    contador += 1
+            except ValueError:
+                continue # Si la fecha en el JSON está mal, saltamos ese equipo
             actual = actual.siguiente
-        
-        if contador == 0:
-            print(f"{Colores.VERDE}✅ Todo al día. No hay equipos retrasados.{Colores.RESET}")
     def exportar_reporte_txt(self):
         nombre_archivo = f"reporte_taller_{datetime.now().strftime('%Y-%m-%d')}.txt"
         with open(nombre_archivo, "w") as f:

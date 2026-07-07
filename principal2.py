@@ -3,6 +3,15 @@ import time
 from lista_reparaciones import ListaReparaciones
 from colores import Colores
 from conversor import ConversorMoneda
+import os
+def limpiar_pantalla():
+    # Detecta el sistema operativo y limpia la terminal
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def mostrar_encabezado():
+    print(f"{Colores.AZUL}============================================")
+    print(f"{Colores.VERDE}🛠️  SISTEMA ALPHA TECH v5.0{Colores.RESET}")
+    print(f"============================================{Colores.RESET}")
 
 def ejecutar_menu():
     sistema = ListaReparaciones()
@@ -11,22 +20,26 @@ def ejecutar_menu():
     conversor = ConversorMoneda()
     try:
         while True:
-            print(f"{Colores.AZUL}\n--- 🛠️ ALPHA TECH (v4.0 MODULAR) ---{Colores.RESET}")
-            print(f"{Colores.VERDE}Próximo ID automático: {sistema.proximo_id}{Colores.RESET}")
-            print(f"{Colores.VERDE}1. Registrar nueva orden{Colores.RESET}")
-            print(f"{Colores.VERDE}2. Ver todas las órdenes{Colores.RESET}")
-            print(f"{Colores.VERDE}3. Cambiar estado de una orden{Colores.RESET}")
-            print(f"{Colores.VERDE}4. Ver informe de rendimiento del taller{Colores.RESET}")
-            print(f"{Colores.VERDE}5. Buscar orden por ID{Colores.RESET}")
-            print(f"{Colores.VERDE}6. Conversor de Moneda{Colores.RESET}")
-            print(f"{Colores.VERDE}7. Ver pagos de una orden{Colores.RESET}")
-            print(f"{Colores.VERDE}8. Conversor de Moneda{Colores.RESET}")
-            print(f"{Colores.VERDE}9. Registrar pago para una orden{Colores.RESET}")
-            print(f"{Colores.VERDE}10. Ver cierre de caja del día{Colores.RESET}")
-            print(f"{Colores.VERDE}11. Ver equipos retrasados{Colores.RESET}")
-            print(f"{Colores.VERDE}12. Exportar reporte a TXT{Colores.RESET}")
-            print(f"{Colores.VERDE}13. Verificar morosidad{Colores.RESET}")
-            print(f"{Colores.VERDE}14. Guardar y Salir{Colores.RESET}")
+            limpiar_pantalla()
+            mostrar_encabezado()
+            print(f"{Colores.VERDE}📦 Próximo ID: {sistema.proximo_id}{Colores.RESET}\n")
+
+        # --- GESTIÓN OPERATIVA ---
+            print(f"{Colores.AZUL}--- OPERACIONES DIARIAS ---{Colores.RESET}")
+            print(f"{Colores.VERDE} 1. Registrar nueva orden      | 2. Ver todas las órdenes{Colores.RESET}")
+            print(f"{Colores.VERDE} 3. Cambiar estado de orden    | 5. Buscar por ID{Colores.RESET}")
+            print(f"{Colores.VERDE} 8. Buscar por nombre          | 9. Registrar pago{Colores.RESET}")
+            print(f"{Colores.VERDE} 7. Ver pagos de orden         | 6. Conversor de Moneda{Colores.RESET}")
+        
+        # --- ADMINISTRACIÓN Y REPORTES ---
+            print(f"\n{Colores.AZUL}--- ADMINISTRACIÓN ---{Colores.RESET}")
+            print(f"{Colores.VERDE} 4. Informe de rendimiento     | 10. Cierre de caja{Colores.RESET}")
+            print(f"{Colores.VERDE} 11. Equipos retrasados        | 13. Verificar morosidad{Colores.RESET}")
+            print(f"{Colores.VERDE} 12. Exportar reporte TXT      {Colores.RESET}")
+        
+        # --- SISTEMA ---
+            print(f"\n{Colores.AMARILLO} 14. Guardar y Salir{Colores.RESET}")
+            print(f"{Colores.AZUL}--------------------------------------------{Colores.RESET}")
             
 
             opcion = input(f"{Colores.AZUL}Seleccione (1-14): {Colores.RESET}")
@@ -196,11 +209,17 @@ def ejecutar_menu():
         
     finally:
         # ESTO SE EJECUTA SIEMPRE, ya sea que el usuario salió bien o hubo un error
-        print("\n⚠️ Guardando sistema de forma segura...")
-        sistema.guardar_en_json()
-        sistema.crear_backup() 
-        sistema.generar_cierre_caja()
-        print("👋 ¡Hasta mañana!")        
+        print(f"+{Colores.AMARILLO}intentando salvaguardar información...{Colores.RESET}")
+        try:
+            # Solo guardamos si el sistema no está completamente roto
+            if sistema.cabeza is not None:
+                sistema.guardar_en_json()
+                sistema.crear_backup()
+                print(f"{Colores.VERDE}✅ Backup de emergencia creado.{Colores.RESET}")
+            else:
+                print(f"{Colores.ROJO}❌ No se pudo guardar: Estructura de datos vacía.{Colores.RESET}")
+        except Exception as e:
+            print(f"{Colores.ROJO}🚨 ERROR FATAL AL GUARDAR: {e}{Colores.RESET}")
 
 if __name__ == "__main__":
     ejecutar_menu()
