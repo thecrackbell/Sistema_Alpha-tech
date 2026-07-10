@@ -1,5 +1,5 @@
 {
-    "proximo_id": 1006,
+    "proximo_id": 1008,
     "equipos": [
         {
             "id_orden": "1001",
@@ -74,6 +74,26 @@
             "estado": "Recibido (En Espera)",
             "pagos": [],
             "fecha_ingreso": "2026-07-04"
+        },
+        {
+            "id_orden": "1006",
+            "cliente": "Manuel",
+            "dispositivo": "impresora",
+            "falla": "mancha la hoja",
+            "presupuesto_usd": 30.0,
+            "estado": "Recibido (En Espera)",
+            "pagos": [],
+            "fecha_ingreso": "2026-07-08"
+        },
+        {
+            "id_orden": "1007",
+            "cliente": "gato",
+            "dispositivo": "x",
+            "falla": "x",
+            "presupuesto_usd": 23.0,
+            "estado": "Entregado al cliente",
+            "pagos": [],
+            "fecha_ingreso": "2026-07-08"
         }
     ]
 }
